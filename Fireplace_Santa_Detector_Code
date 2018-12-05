@@ -1,0 +1,124 @@
+#include <msp430.h> 
+
+
+/**
+ * main.c
+ */
+int IB = 0;
+int F = 0;
+
+int CPINS()
+{
+    P1DIR &=~BIT2;
+    P1OUT |= BIT2;
+    P1REN |= BIT2;
+
+    P1DIR &=~BIT3;
+    P1OUT |= BIT3;
+    P1REN |= BIT3;
+
+    P1IE |= BIT2;
+    P1IES |= BIT2;
+    P1IFG &=~BIT2;
+
+    P1IE |= BIT3;
+    P1IES |= BIT3;
+    P1IFG &=~BIT3;
+}
+
+int CPWM()
+{
+    P2DIR |= BIT0; //Speaker
+    P2SEL |= BIT0;
+    P2OUT &= ~BIT0;
+
+    P2DIR |= BIT2; //Green
+    P2OUT &= ~BIT2;
+    
+    P7DIR |= BIT4; //Red
+    P7OUT &= ~BIT4;
+
+    TA0CTL = TASSEL_2 + MC_1 + TACLR;
+    TA0CCR0 = 1000000;
+    TA0CCTL0 = CCIE;
+    TA1CCR0 = 512-1;                          // PWM Period
+    TA1CCR1 = 0;                            // CCR1 PWM duty cycle
+    TA1CCTL1 = OUTMOD_7;
+    TA1CTL = TASSEL_2 + MC_1 + TACLR;         // SMCLK, up mode, clear TAR
+    TA2CTL = TASSEL_2 + MC_1 + TACLR;
+}
+
+int main(void)
+{
+	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
+	CPINS();
+	CPWM();
+	
+	while (1)
+	{
+	    if(IB == 1 && F == 0)
+	    {
+	        //Music
+	        if(TA1CCR1 >= 450)
+	        {
+	            TA1CCR1 = TA1CCR1 + 50;
+	        }
+	        
+	    }
+	}
+	return 0;
+}
+
+#pragma vector=PORT2_VECTOR    //Motion Sensor
+__interrupt void Port_2(void)
+{
+    if (Santa == 0)
+    {
+       Santa = 1;
+       P2OUT |= BIT1;
+       P7OUT &= ~BIT4;
+
+    }
+
+
+}
+
+#pragma vector=PORT3_VECTOR    //Fire Sensor
+__interrupt void Port_3(void)
+{
+    F = 1;
+    while (F == 1)
+    {
+        P7OUT |= BIT4;
+        P2OUT &= ~BIT2;
+        if(Santa == 1)
+        {
+            //Alarm
+            //Turns Music Off
+            TA1CCR1 = 0;
+            
+        }
+
+
+    }
+    
+
+}
+#pragma vector = TIMER0_A0_VECTOR                   // Detects interrupt for CCR0 on Timer1
+__interrupt void Timer_A0(void)
+{
+    Santa = 0;
+    F = 0;
+    TA1CCR1 = 0;
+    P2OUT &= ~BIT2;
+    P7OUT &= ~BIT4;
+    
+
+}
+#pragma vector = TIMER1_A0_VECTOR                   // Detects interrupt for CCR0 on Timer1
+__interrupt void Timer_A1(void)
+{
+    P2OUT ^= BIT2;
+    P7OUT ^= BIT4;
+
+}
