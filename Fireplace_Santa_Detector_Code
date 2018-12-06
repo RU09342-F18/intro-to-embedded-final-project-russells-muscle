@@ -7,6 +7,16 @@
 int IB = 0;
 int F = 0;
 
+int CUART()
+{
+    P4SEL |= BIT4+BIT5;
+        UCA1CTL1 |= UCSWRST;
+        UCA1CTL1 |=UCSSEL_2;
+        UCA1BR0= 6;
+        UCA1BR1= 0;
+        UCA1MCTL |= UCBRS_0 +UCBRF_13 + UCOS16;
+        UCA1CTL1 &= ~UCSWRST;
+}
 int CPINS()
 {
     P1DIR &=~BIT2;
@@ -53,10 +63,11 @@ int main(void)
 	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
 	CPINS();
 	CPWM();
+	CUART();
 	
 	while (1)
 	{
-	    if(IB == 1 && F == 0)
+	    if(IB == 1 && F == 1)
 	    {
 	        //Music
 	        if(TA1CCR1 >= 450)
@@ -72,9 +83,9 @@ int main(void)
 #pragma vector=PORT2_VECTOR    //Motion Sensor
 __interrupt void Port_2(void)
 {
-    if (Santa == 0)
+    if (IB == 0)
     {
-       Santa = 1;
+       IB = 1;
        P2OUT |= BIT1;
        P7OUT &= ~BIT4;
 
@@ -87,31 +98,24 @@ __interrupt void Port_2(void)
 __interrupt void Port_3(void)
 {
     F = 1;
-    while (F == 1)
-    {
+    
         P7OUT |= BIT4;
         P2OUT &= ~BIT2;
-        if(Santa == 1)
-        {
-            //Alarm
-            //Turns Music Off
-            TA1CCR1 = 0;
-            
-        }
-
-
-    }
+        
+        
+    
     
 
 }
 #pragma vector = TIMER0_A0_VECTOR                   // Detects interrupt for CCR0 on Timer1
 __interrupt void Timer_A0(void)
 {
-    Santa = 0;
+    IB = 0;
     F = 0;
     TA1CCR1 = 0;
     P2OUT &= ~BIT2;
     P7OUT &= ~BIT4;
+    if
     
 
 }
