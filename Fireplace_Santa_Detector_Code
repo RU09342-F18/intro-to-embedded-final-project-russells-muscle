@@ -44,18 +44,21 @@ int CPWM()
 
     P2DIR |= BIT2; //Green
     P2OUT &= ~BIT2;
-    
+
     P7DIR |= BIT4; //Red
     P7OUT &= ~BIT4;
 
-    TA0CTL = TASSEL_2 + MC_1 + TACLR;
-    TA0CCR0 = 1000000;
+    TA0CTL = TASSEL_2 + MC_1;
+    TA0CCR0 = 100;
     TA0CCTL0 = CCIE;
     TA1CCR0 = 512-1;                          // PWM Period
     TA1CCR1 = 0;                            // CCR1 PWM duty cycle
     TA1CCTL1 = OUTMOD_7;
-    TA1CTL = TASSEL_2 + MC_1 + TACLR;         // SMCLK, up mode, clear TAR
-    TA2CTL = TASSEL_2 + MC_1 + TACLR;
+    TA1CTL = TASSEL_2 + MC_1;         // SMCLK, up mode, clear TAR
+    TA2CTL = TASSEL_2 + MC_1;
+
+    TA1CCTL0 |= CCIE;
+    TA0CCTL0 |= CCIE;
 }
 
 int main(void)
@@ -74,14 +77,14 @@ int main(void)
 	        {
 	            TA1CCR1 = TA1CCR1 + 50;
 	        }
-	        
+
 	    }
 	}
-	return 0;
+
 }
 
-#pragma vector=PORT2_VECTOR    //Motion Sensor
-__interrupt void Port_2(void)
+#pragma vector=PORT1_VECTOR    //Motion Sensor
+__interrupt void Port_1(void)
 {
     if (IB == 0)
     {
@@ -91,20 +94,25 @@ __interrupt void Port_2(void)
 
     }
 
+    P1IFG &=~BIT2;
 
 }
 
-#pragma vector=PORT3_VECTOR    //Fire Sensor
-__interrupt void Port_3(void)
+#pragma vector=PORT2_VECTOR    //Fire Sensor
+__interrupt void Port_2(void)
 {
+    if(P1IN & BIT3)
+    {
     F = 1;
-    
+
         P7OUT |= BIT4;
         P2OUT &= ~BIT2;
-        
-        
-    
-    
+    }
+    else
+    {
+        F = 0;
+    }
+        P1IFG &=~BIT3;
 
 }
 #pragma vector = TIMER0_A0_VECTOR                   // Detects interrupt for CCR0 on Timer1
@@ -115,8 +123,14 @@ __interrupt void Timer_A0(void)
     TA1CCR1 = 0;
     P2OUT &= ~BIT2;
     P7OUT &= ~BIT4;
-    if
-    
+    if(P1IN & BIT3)
+    {
+        F = 1;
+    }
+    if(P1IN & BIT2)
+    {
+        IB = 1;
+    }
 
 }
 #pragma vector = TIMER1_A0_VECTOR                   // Detects interrupt for CCR0 on Timer1
