@@ -49,9 +49,9 @@ int CPWM()
     P4OUT &= ~BIT7;
 
     TA0CTL = TASSEL_2 + MC_1 + ID_3;
-    TA0CCR0 = 10000000;
+    TA0CCR0 = 1000000;
     TA0CCTL0 = CCIE;
-    TA1CCR0 = 500000;                          // PWM Period
+    TA1CCR0 = 5000;                          // PWM Period
     TA1CCR1 = 0;                            // CCR1 PWM duty cycle
     TA1CCTL1 = OUTMOD_7;
     TA1CTL = TASSEL_2 + MC_1 + ID_2;         // SMCLK, up mode, clear TAR
@@ -164,14 +164,15 @@ __interrupt void Timer_A1(void)
     if(P8IN & BIT2)
        {
         if(P3IN & BIT7){
-            ToggleRED();
-            ToggleGreen();
+            OFFRED();
+            OFFGreen();
 
         }
         else
         {
-            OFFRED();
-            OFFGreen();
+            ToggleRED();
+            ToggleGreen();
+
 
         }
 
