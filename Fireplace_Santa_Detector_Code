@@ -1,9 +1,6 @@
 #include <msp430.h> 
 
 
-/**
- * main.c
- */
 int IB = 0;
 int F = 0;
 
