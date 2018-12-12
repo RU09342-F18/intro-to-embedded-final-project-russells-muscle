@@ -49,9 +49,9 @@ int CPWM()
     P4OUT &= ~BIT7;
 
     TA0CTL = TASSEL_2 + MC_1 + ID_3;
-    TA0CCR0 = 1000000;
+    TA0CCR0 = 10000000;
     TA0CCTL0 = CCIE;
-    TA1CCR0 = 5000;                          // PWM Period
+    TA1CCR0 = 120000;                          // PWM Period
     TA1CCR1 = 0;                            // CCR1 PWM duty cycle
     TA1CCTL1 = OUTMOD_7;
     TA1CTL = TASSEL_2 + MC_1 + ID_2;         // SMCLK, up mode, clear TAR
@@ -131,30 +131,33 @@ __interrupt void Timer_A0(void)
 
     if(P3IN & BIT7)
     {
-        F = 0;
-        TA1CCR1 = 0;
+        F = 1;
+
+
     }
     else
     {
-        F = 1;
+        F = 0;
+       UCA1TXBUF = 911;
+
 
     }
     if(P8IN & BIT2)
     {
-        IB = 0;
-        TA1CCR1 = 0;
+        IB = 1;
+
     }
     else
     {
-        IB = 1;
+       // UCA1TXBUF = 'Someone is in the building';
+        IB = 0;
     }
     if(IB == 1 && F == 1)
         {
-            //Music
-            if(TA1CCR1 >= 450)
-            {
-                TA1CCR1 = TA1CCR1 + 50;
-            }
+        // = 'PEOPLE NEED TO BE RESCUED!!!';
+
+                TA1CCR1 = 100000;
+
 
         }
 }
@@ -164,24 +167,30 @@ __interrupt void Timer_A1(void)
     if(P8IN & BIT2)
        {
         if(P3IN & BIT7){
-            OFFRED();
-            OFFGreen();
 
-        }
-        else
-        {
             ToggleRED();
-            ToggleGreen();
+             ToggleGreen();
 
 
-        }
+                      }
+                      else
+                      {
+                          OFFRED();
+                          OFFGreen();
 
+
+
+                      }
 
        }
     else
        {
-        ToggleRED();
+
+       ToggleRED();
         OFFGreen();
+
+
+
        }
 
 
