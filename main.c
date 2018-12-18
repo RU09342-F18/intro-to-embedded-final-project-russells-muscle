@@ -1,4 +1,4 @@
-#include <msp430.h> 
+#include <msp430.h>
 
 
 int IB = 0;
@@ -10,7 +10,7 @@ int CUART()
     P4SEL |= BIT4+BIT5;
         UCA1CTL1 |= UCSWRST;
         UCA1CTL1 |=UCSSEL_2;
-        UCA1BR0= 6;
+        UCA1BR0= 0x03;
         UCA1BR1= 0;
         UCA1MCTL |= UCBRS_0 +UCBRF_13 + UCOS16;
         UCA1CTL1 &= ~UCSWRST;
@@ -86,7 +86,7 @@ int Ctopic()
     int strLen = 6;
     while (strCounter<=strLen)
     {
-        while(!(UCTXIFG & UCA1TXBUF));
+        while(!(UCTXIFG));
         UCA1TXBUF = topic[strCounter];
         strCounter++;
     }
@@ -100,7 +100,7 @@ int sendNotice()
     int noticeCounter;
     while (noticeCounter<=noticeLen)
         {
-            while(!(UCTXIFG & UCA1TXBUF));
+            while(!(UCTXIFG));
             UCA1TXBUF = notice[noticeCounter];
             noticeCounter++;
         }
