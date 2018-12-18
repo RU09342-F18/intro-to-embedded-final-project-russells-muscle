@@ -3,16 +3,16 @@
 
 int IB = 0;
 int F = 0;
-
+char temp;
 
 int CUART()
 {
     P4SEL |= BIT4+BIT5;
         UCA1CTL1 |= UCSWRST;
         UCA1CTL1 |=UCSSEL_2;
-        UCA1BR0= 0x03;
-        UCA1BR1= 0;
-        UCA1MCTL |= UCBRS_0 +UCBRF_13 + UCOS16;
+        UCA1BR0= 8;                     //sets baud rate to 115200 to match the esp8266
+        UCA1BR1= 0;                     //sets baud rate to 115200 to match the esp8266
+        UCA1MCTL |= UCBRS_6 +UCBRF_0;   //sets baud rate to 115200 to match the esp8266
         UCA1CTL1 &= ~UCSWRST;
 }
 
@@ -81,13 +81,14 @@ int OFFGreen()
 
 int Ctopic()
 {
-    char topic[] = {'$', 'F', 'i', 'r', 'e', ' ', 10};
+    char topic[] = {'$', 'F', 'i', 'r', 'e', ' ', '\n'};
     int strCounter = 0;
-    int strLen = 6;
+    int strLen = sizeof(topic);
     while (strCounter<=strLen)
     {
         while(!(UCTXIFG));
-        UCA1TXBUF = topic[strCounter];
+        temp = topic[strCounter];
+        UCA1TXBUF = temp;
         strCounter++;
     }
 }
@@ -95,13 +96,14 @@ int Ctopic()
 
 int sendNotice()
 {
-    char notice[] = {'#', 'F', 'i', 'r', 'e', ' ', 'i', 'n', ' ', 'd', 'i', 's', ' ', 'b', 'i', 't', 'c', 'h', ' ' , 10};
+    char notice[] = {'#', 'F', 'i', 'r', 'e', ' ', 'i', 'n', ' ', 'd', 'i', 's', ' ', 'b', 'i', 't', 'c', 'h',' ' , '\n'};//'i', 'r', 'e', ' ', 'i', 'n', ' ', 'd', 'i', 's', ' ', 'b', 'i', 't', 'c', 'h',
     int noticeLen = sizeof(notice);
-    int noticeCounter;
-    while (noticeCounter<=noticeLen)
+    int noticeCounter=0;
+    while (noticeCounter<noticeLen)
         {
             while(!(UCTXIFG));
-            UCA1TXBUF = notice[noticeCounter];
+            temp = notice[noticeCounter];
+            UCA1TXBUF = temp;
             noticeCounter++;
         }
 }
