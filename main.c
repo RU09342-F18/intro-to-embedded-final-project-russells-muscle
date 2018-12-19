@@ -8,12 +8,12 @@ char temp;
 int CUART()
 {
     P4SEL |= BIT4+BIT5;
-        UCA1CTL1 |= UCSWRST;
-        UCA1CTL1 |=UCSSEL_2;
-        UCA1BR0= 8;                     //sets baud rate to 115200 to match the esp8266
-        UCA1BR1= 0;                     //sets baud rate to 115200 to match the esp8266
-        UCA1MCTL |= UCBRS_6 +UCBRF_0;   //sets baud rate to 115200 to match the esp8266
-        UCA1CTL1 &= ~UCSWRST;
+    UCA1CTL1 |= UCSWRST;
+    UCA1CTL1 |=UCSSEL_2;
+    UCA1BR0= 9;                     //sets baud rate to 115200 to match the esp8266
+    UCA1BR1= 0;                     //sets baud rate to 115200 to match the esp8266
+    UCA1MCTL |= UCBRS_1 +UCBRF_0;   //sets baud rate to 115200 to match the esp8266
+    UCA1CTL1 &= ~UCSWRST;
 }
 
 
@@ -46,10 +46,10 @@ int CPWM()
     TA0CTL = TASSEL_2 + MC_1 + ID_3;
     TA0CCR0 = 10000000;
     TA0CCTL0 = CCIE;
-    TA1CCR0 = 120000;                          // PWM Period
-    TA1CCR1 = 0;                            // CCR1 PWM duty cycle
+    TA1CCR0 = 120000;                           // PWM Period
+    TA1CCR1 = 0;                                // CCR1 PWM duty cycle
     TA1CCTL1 = OUTMOD_7;
-    TA1CTL = TASSEL_2 + MC_1 + ID_2;         // SMCLK, up mode, clear TAR
+    TA1CTL = TASSEL_2 + MC_1 + ID_2;            // SMCLK, up mode, clear TAR
     TA1CCTL0 |= CCIE;
     TA0CCTL0 |= CCIE;
 }
@@ -81,12 +81,12 @@ int OFFGreen()
 
 int Ctopic()
 {
-    char topic[] = {'$', 'F', 'i', 'r', 'e', ' ', '\n'};
+    char topic[] = {'$', 'F', 'i', 'r', 'e', '\n'};
     int strCounter = 0;
-    int strLen = sizeof(topic);
+    int strLen = 5;
     while (strCounter<=strLen)
     {
-        while(!(UCTXIFG));
+        while(!(UCA1IFG&UCTXIFG));
         temp = topic[strCounter];
         UCA1TXBUF = temp;
         strCounter++;
@@ -96,12 +96,12 @@ int Ctopic()
 
 int sendNotice()
 {
-    char notice[] = {'#', 'F', 'i', 'r', 'e', ' ', 'i', 'n', ' ', 'd', 'i', 's', ' ', 'b', 'i', 't', 'c', 'h',' ' , '\n'};//'i', 'r', 'e', ' ', 'i', 'n', ' ', 'd', 'i', 's', ' ', 'b', 'i', 't', 'c', 'h',
-    int noticeLen = sizeof(notice);
-    int noticeCounter=0;
-    while (noticeCounter<noticeLen)
+    char notice[] = {'#', 'F', 'i', 'r', 'e', ' ', 'F', 'i', 'r', 'e', '\n'};
+    int noticeLen = 10;
+    int noticeCounter = 0;
+    while (noticeCounter<=noticeLen)
         {
-            while(!(UCTXIFG));
+            while(!(UCA1IFG&UCTXIFG));
             temp = notice[noticeCounter];
             UCA1TXBUF = temp;
             noticeCounter++;
@@ -196,3 +196,4 @@ __interrupt void Timer_A1(void)
         OFFGreen();
        }
 }
+
