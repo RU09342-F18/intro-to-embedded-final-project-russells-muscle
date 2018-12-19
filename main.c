@@ -28,48 +28,48 @@ int CPINS()
 }
 
 
-int CPWM()
+int CPWM() //All Clock and LED Configurations
 {
-    P2DIR |= BIT0; //Speaker
-    P2SEL |= BIT0;
-    P2OUT &= ~BIT0;
-    P1DIR |= BIT0; //Red
-    P1OUT &=~BIT0;
-    P4DIR |= BIT7; //Green
-    P4OUT &= ~BIT7;
-    TA0CTL = TASSEL_2 + MC_1 + ID_3;
-    TA0CCR0 = 10000000;
-    TA0CCTL0 = CCIE;
+    P2DIR |= BIT0;                              // Configure Speaker PWM P2.0
+    P2SEL |= BIT0;                              //
+    P2OUT &= ~BIT0;                             //
+    P1DIR |= BIT0;                              //Configure Red LED P1.0
+    P1OUT &=~BIT0;                              //
+    P4DIR |= BIT7;                              // Configure Green LED P4.7
+    P4OUT &= ~BIT7;                             //
+    TA0CTL = TASSEL_2 + MC_1 + ID_3;            //Sets TimerA0 to SM_CLK, UP_MODE, Divider_8
+    TA0CCR0 = 10000000;                         //Setting TimerA0 Timer frequency
+    TA0CCTL0 = CCIE;                            //Enables TimerA0 Interrupt
     TA1CCR0 = 120000;                           // PWM Period
-    TA1CCR1 = 0;                                // CCR1 PWM duty cycle
-    TA1CCTL1 = OUTMOD_7;
-    TA1CTL = TASSEL_2 + MC_1 + ID_2;            // SMCLK, up mode, clear TAR
-    TA1CCTL0 |= CCIE;
-    TA0CCTL0 |= CCIE;
+    TA1CCR1 = 0;                                // Setting initial duty cycle of Speaker to 0%
+    TA1CCTL1 = OUTMOD_7;                        // CCR1 reset/set
+    TA1CTL = TASSEL_2 + MC_1 + ID_2;            // Sets TimerA0 to SM_CLK, UP_MODE, Divider_4
+    TA1CCTL0 |= CCIE;                           //Enables TimerA1 Interrupt
+    
 }
 
 
-int ToggleRED()
+int ToggleRED()    //Toggles Red LED
 {
-    P1OUT ^= BIT0;
+    P1OUT ^= BIT0; //Toggles P1.0
 }
 
 
-int ToggleGreen()
+int ToggleGreen()  //Toggles Green LED
 {
-    P4OUT ^= BIT7;
+    P4OUT ^= BIT7; //Toggles P4.7
 }
 
 
-int OFFRED()
+int OFFRED()        //Disables Red LED
 {
-    P1OUT &= ~BIT0;
+    P1OUT &= ~BIT0; //Turns P1.0 Off
 }
 
 
-int OFFGreen()
+int OFFGreen()      //Disables Green LED
 {
-    P4OUT &= ~BIT7;
+    P4OUT &= ~BIT7; //Turns P4.7 Off
 }
 
 
@@ -149,22 +149,22 @@ __interrupt void Timer_A0(void)
 #pragma vector = TIMER1_A0_VECTOR                   // Detects interrupt for CCR0 on Timer1
 __interrupt void Timer_A1(void)
 {
-    if(P8IN & BIT2)
+    if(P8IN & BIT2) //When fire is not detected
        {
-        if(P3IN & BIT7){
-            ToggleRED();
-             ToggleGreen();
+        if(P3IN & BIT7){    //When motion sensor isn't triggered
+            ToggleRED();    //Toggles Red LED
+             ToggleGreen(); //Toggles Green LED
                       }
-                      else
-                      {
-                          OFFRED();
-                          OFFGreen();
-                      }
+         else               //Default value when neither sensor is triggered
+            {
+             OFFRED();      //Disables Red LED
+             OFFGreen();    //Disable Green LED
+            }
        }
-    else
+    else //Just Toggles Red LED when fire is detected
        {
-       ToggleRED();
-        OFFGreen();
+       ToggleRED();         //Toggles Red LED
+        OFFGreen();         //Disables Green LED
        }
 }
 
