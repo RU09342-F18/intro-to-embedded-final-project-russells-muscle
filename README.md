@@ -1,6 +1,6 @@
 # Santa's Fire Detector
 ### Final Project for Introduction to Embedded Systems
-### Team Members: Shane Price, Kieran O'Connor, Nicholas Klein
+### Team Members: Nicholas Klein, Kieran O'Connor, Shane Price
 
 ## Description
 Santa's Fire Detector is a warning system designed to alert users of a fire via wifi and to sound an alarm if someone is near. Users are alerted using the MQTT DASH phone app by subscribing to the topic "Fire". They must be connected to the same wifi as Santa's Fire Detector to recieve the notification. The name comes from the idea that the alarm would sound if Santa came down the chimney while the fire is lit.
