@@ -119,30 +119,29 @@ int main(void)
 #pragma vector = TIMER0_A0_VECTOR                   // Detects interrupt for CCR0 on Timer1
 __interrupt void Timer_A0(void)
 {
-    if(P3IN & BIT7)
+    if(P3IN & BIT7)                                //checks value of pin 3.7
     {
-        IB = 1;
+        IB = 1;                                    //sets value of "In Building" to 1
     }
     else
     {
-        IB = 0;
-       TA1CCR1 = 0;
+        IB = 0;                                    //if pin 3.7 is not driven high sets value to 0.
+       TA1CCR1 = 0;                                //keeps pwm off
     }
-    if(P8IN & BIT2)
+    if(P8IN & BIT2)                                //checks value of pin 8.2
     {
-        F = 0;
-        TA1CCR1 = 0;
+        F = 0;                                     //sets value of "fire" to 0
+        TA1CCR1 = 0;                               //keeps pwm off
     }
     else
     {
-       // UCA1TXBUF = 'Someone is in the building';
-        F = 1;
-        sendNotice();
+        F = 1;                                     //sets value of Fire to 1 if fire and in building are 1
+        sendNotice();                              // sends "Fire" message
     }
     if(IB == 1 && F == 1)
         {
         // = 'PEOPLE NEED TO BE RESCUED!!!';
-                TA1CCR1 = 100000;
+                TA1CCR1 = 100000;                   //sets pwm to a buzzer to audibly alert the person in building if there is motion from 3.7 and fire from 8.2
         }
 }
 
