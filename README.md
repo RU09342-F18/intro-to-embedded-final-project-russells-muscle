@@ -37,14 +37,25 @@ cycle to the alarm which makes an audible alarm sound.
 
 ## Parts List
 • 1 MSP-EXP430F5529LP Microcontroller
+
 • 1 ESP-01 Seral Wifi Module
+
   • ESP8266 microchip
+  
 • 1 Arduino Flame Sensor
+
 • 1 Mini PIR Motion Sensor
+
 • Resistors
+
   • 2 100Ω resistor
+  
   • 1 150Ω Resistor
+  
   • 1 10kΩ Resistor
+  
 • 2 2N7000G MOSFET
+
 • 2 Buttons
+
 • 1 Solderless Breadboard
