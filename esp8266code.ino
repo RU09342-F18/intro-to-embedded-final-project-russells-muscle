@@ -3,7 +3,6 @@
   This code is meant to encapsulate all of the necessary protocols and resources for MQTT and
   leave it on the ESP8266. Connected over a simple UART connection, this can allow your project to quickly
   talk over the internet without the need for complicating your design.
-
   Commands:
   $Subscribe        SYNTAX: "$Topic\n"
   #Publish          SYNTAX: "#Topic Payload\n"
@@ -15,7 +14,7 @@
 // Update these with values suitable for your network.
 const char* ssid = "Rowan_IoT";
 const char* password =  "";
-const char* mqtt_server = "172.24.137.95";
+const char* mqtt_server = "172.24.137.95"; 
 const int mqttPort = 1883;
 /* This is for CloudMQTT
 const char* mqtt_server = "m13.cloudmqtt.com";
@@ -75,8 +74,8 @@ void reconnect() {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     
-    //if (client.connect("ESP8266Client", mqttUser, mqttPassword)) {
-    if (client.connect("ESP8266Client")) {
+    //if (client.connect("Fire", mqttUser, mqttPassword)) {
+    if (client.connect("Fire")) {
       Serial.println("connected");
       client.publish("TempOut", "Temperature Readings:"); //publish temperature value to "TempOut"
       client.subscribe("inTemp"); //temp sensor data pull
