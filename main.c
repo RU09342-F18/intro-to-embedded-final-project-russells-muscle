@@ -1,9 +1,9 @@
 #include <msp430.h>
 
 
-int IB = 0;
-int F = 0;
-char temp;
+int IB = 0; //Variable indicating motion sensor being is tripped
+int F = 0;  //Variable indicating fire sensor is tripped
+char temp;  //Temporary Variable used to dubug system output to ESP8266 chip
 
 int CUART()
 {
